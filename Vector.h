@@ -59,19 +59,18 @@ template<class T> T& Vector<T>::at(size_t index){
 }
 
 template<class T> void Vector<T>::push_back(T value){
-	inner_size++;
-	if (inner_size <= inner_capacity)
+	if (inner_size < inner_capacity)
 	{
-		inner_array[inner_size] = value;
+		inner_array[inner_size++] = value;
 
 	} else {
 		inner_capacity *= growth_rate;
 		tmparr = std::unique_ptr<T[ ]>(new T[inner_capacity]);
 
-		for (size_t i = 0; i < inner_size - 1; ++i)
+		for (size_t i = 0; i < inner_size; ++i)
 			tmparr[i] = inner_array[i];
 
-		tmparr[inner_size] = value;
+		tmparr[inner_size++] = value;
 		inner_array = std::move(tmparr);
 	}
 }
@@ -83,19 +82,13 @@ template<class T> void Vector<T>::pop_back(){
 template<class T> void Vector<T>::resize(size_t new_size){
 	inner_size = new_size;
 
-	if (inner_size <= inner_capacity)
-	{
-		inner_array[inner_size] = value;
+	inner_capacity *= growth_rate;
+	tmparr = std::unique_ptr<T[ ]>(new T[inner_capacity]);
 
-	} else {
-		inner_capacity *= growth_rate;
-		tmparr = std::unique_ptr<T[ ]>(new T[inner_capacity]);
+	for (size_t i = 0; i < inner_size; ++i)
+		tmparr[i] = inner_array[i];
 
-		for (size_t i = 0; i < inner_size; ++i)
-			tmparr[i] = inner_array[i];
-
-		inner_array = std::move(tmparr);
-	}
+	inner_array = std::move(tmparr);
 
 }
 
