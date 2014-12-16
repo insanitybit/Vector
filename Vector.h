@@ -2,6 +2,7 @@
 #define VECTOR_H 
 
 #include <memory>
+#include <algorithm>
 #include <assert.h>
 
 template<class T>
@@ -67,8 +68,7 @@ template<class T> void Vector<T>::push_back(T value){
 		inner_capacity *= growth_rate;
 		tmparr = std::unique_ptr<T[ ]>(new T[inner_capacity]);
 
-		for (size_t i = 0; i < inner_size; ++i)
-			tmparr[i] = inner_array[i];
+		std::copy(&inner_array[0], &inner_array[inner_size], &tmparr[0]);
 
 		tmparr[inner_size++] = value;
 		inner_array = std::move(tmparr);
@@ -84,12 +84,10 @@ template<class T> void Vector<T>::resize(size_t new_size){
 
 	inner_capacity *= growth_rate;
 	tmparr = std::unique_ptr<T[ ]>(new T[inner_capacity]);
-
-	for (size_t i = 0; i < inner_size; ++i)
-		tmparr[i] = inner_array[i];
+	
+	std::copy(&inner_array[0], &inner_array[inner_size], &tmparr[0]);
 
 	inner_array = std::move(tmparr);
-
 }
 
 template<class T> void Vector<T>::shrink_to_fit(){
@@ -101,8 +99,6 @@ template<class T> void Vector<T>::shrink_to_fit(){
 		tmparr[i] = inner_array[i];
 
 	inner_array = std::move(tmparr);
-	tmparr.reset();
-
 }
 
 
