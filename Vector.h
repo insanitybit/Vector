@@ -5,13 +5,13 @@
 #include <algorithm>
 #include <assert.h>
 
-template<class T>
+template<class T, typename Growth>
 class Vector
 {
 public:
 	Vector();
-	// Vector(Vector<T>&);
-	// Vector(Vector<T>&&);
+	// Vector(Vector<T, Growth>&);
+	// Vector(Vector<T, Growth>&&);
 
 	Vector(const size_t);
 
@@ -29,15 +29,15 @@ public:
 	size_t capacity();
 	size_t size();
 
-	void set_growth_rate(const size_t);
-	size_t get_growth_rate();
+	void set_growth_rate(const Growth);
+	Growth get_growth_rate();
 
 	std::unique_ptr<T[ ]>& data();	
 
 private:
 	size_t inner_size;
 	size_t inner_capacity;
-	size_t growth_rate = 2;
+	Growth growth_rate = 2;
 
 	std::unique_ptr<T[ ]> inner_array;
 	std::unique_ptr<T[ ]> tmparr;
@@ -46,7 +46,7 @@ private:
 
 
 
-template<class T> Vector<T>::Vector(){
+template<class T, typename Growth> Vector<T, Growth>::Vector(){
 	inner_array = std::unique_ptr<T[ ]>(new T[0]);
 	inner_capacity = 2;
 	inner_size = 0;
@@ -54,7 +54,7 @@ template<class T> Vector<T>::Vector(){
 
 
 // // copy constructor
-// template<class T> Vector<T>::Vector(Vector<T>& v){
+// template<class T, typename Growth> Vector<T, Growth>::Vector(Vector<T, Growth>& v){
 // 	inner_array = std::unique_ptr<T[ ]>(new T[v.size()]);
 // 	inner_capacity = v.capacity();
 // 	inner_size = v.size();
@@ -64,7 +64,7 @@ template<class T> Vector<T>::Vector(){
 // }
 
 // // rval constructor
-// template<class T> Vector<T>::Vector(Vector<T>&& v){
+// template<class T, typename Growth> Vector<T, Growth>::Vector(Vector<T, Growth>&& v){
 // 	inner_array = std::unique_ptr<T[ ]>(new T[v.size()]);
 // 	inner_capacity = v.capacity();
 // 	inner_size = v.size();
@@ -73,7 +73,7 @@ template<class T> Vector<T>::Vector(){
 // 	// std::move(&inner_array[0], &inner_array[inner_size], &v.data()[0]);`// nope
 // } 
 
-template<class T> Vector<T>::Vector(const size_t count){
+template<class T, typename Growth> Vector<T, Growth>::Vector(const size_t count){
 	inner_array = std::unique_ptr<T[ ]>(new T[count]);
 	if (count < 2)
 		inner_capacity = 2;
@@ -83,12 +83,12 @@ template<class T> Vector<T>::Vector(const size_t count){
 	inner_size = count;
 }
 
-template<class T> T& Vector<T>::at(const size_t index){
+template<class T, typename Growth> T& Vector<T, Growth>::at(const size_t index){
 	assert(index < inner_size);
 	return inner_array[index];
 }
 
-template<class T> void Vector<T>::push_back(const T& value){
+template<class T, typename Growth> void Vector<T, Growth>::push_back(const T& value){
 	if (inner_size < inner_capacity)
 	{
 		inner_array[inner_size++] = value;
@@ -104,7 +104,7 @@ template<class T> void Vector<T>::push_back(const T& value){
 	}
 }
 
-// template<class T> void Vector<T>::push_back(const T&& value){
+// template<class T, typename Growth> void Vector<T, Growth>::push_back(const T&& value){
 // 	if (inner_size < inner_capacity)
 // 	{
 // 		inner_array[inner_size++] = value;
@@ -121,11 +121,11 @@ template<class T> void Vector<T>::push_back(const T& value){
 // }
 
 
-template<class T> void Vector<T>::pop_back(){
+template<class T, typename Growth> void Vector<T, Growth>::pop_back(){
 	inner_size--;
 }
 
-template<class T> void Vector<T>::resize(const size_t new_size){
+template<class T, typename Growth> void Vector<T, Growth>::resize(const size_t new_size){
 	inner_size = new_size;
 
 	inner_capacity = inner_size;
@@ -136,7 +136,7 @@ template<class T> void Vector<T>::resize(const size_t new_size){
 	// inner_array = std::move(tmparr);
 }
 
-template<class T> void Vector<T>::shrink_to_fit(){
+template<class T, typename Growth> void Vector<T, Growth>::shrink_to_fit(){
 	inner_capacity = inner_size;
 
 	tmparr = std::unique_ptr<T[ ]>(new T[inner_capacity]);
@@ -148,23 +148,23 @@ template<class T> void Vector<T>::shrink_to_fit(){
 }
 
 
-template<class T> size_t Vector<T>::capacity(){
+template<class T, typename Growth> size_t Vector<T, Growth>::capacity(){
 	return inner_capacity;
 }
 
-template<class T> size_t Vector<T>::size(){
+template<class T, typename Growth> size_t Vector<T, Growth>::size(){
 	return inner_size;
 }
 
-template<class T> size_t Vector<T>::get_growth_rate(){
+template<class T, typename Growth> Growth Vector<T, Growth>::get_growth_rate(){
 	return growth_rate;
 }
 
-template<class T> void Vector<T>::set_growth_rate(const size_t gr){
+template<class T, typename Growth> void Vector<T, Growth>::set_growth_rate(const Growth gr){
 	growth_rate = gr;
 }
 
-template<class T> std::unique_ptr<T[ ]>& Vector<T>::data(){
+template<class T, typename Growth> std::unique_ptr<T[ ]>& Vector<T, Growth>::data(){
 	return inner_array;
 }
 
