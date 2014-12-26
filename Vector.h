@@ -51,12 +51,15 @@ template<class T, typename Growth> Vector<T, Growth>::Vector(){
 
 // // copy constructor
 template<class T, typename Growth> Vector<T, Growth>::Vector(Vector<T, Growth>& v){
+	inner_array = std::unique_ptr<T[ ]>(new T[v.size()]);
 	inner_capacity = v.capacity();
 	inner_size = v.size();
 	growth_rate = v.get_growth_rate();
-	inner_array = std::unique_ptr<T[ ]>(new T[inner_size]);
 
-	std::copy(inner_array[0], inner_array[inner_size], v.data()[0]);
+	for (size_t i = 0; i < inner_size; ++i)
+		inner_array[i] = v.data()[i];
+
+	// std::copy(&inner_array[0], &inner_array[inner_size], &v.data()[0]); can't figur eout why this is not working
 }
 
 // // rval constructor
