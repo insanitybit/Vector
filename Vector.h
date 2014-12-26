@@ -10,7 +10,7 @@ class Vector
 {
 public:
 	Vector();
-	// Vector(Vector<T, Growth>&);
+	Vector(Vector<T, Growth>&);
 	Vector(Vector<T, Growth>&&);
 
 	Vector(const size_t);
@@ -43,27 +43,21 @@ private:
 	std::unique_ptr<T[ ]> tmparr;
 };
 
-
-
-
 template<class T, typename Growth> Vector<T, Growth>::Vector(){
 	inner_array = std::unique_ptr<T[ ]>(new T[0]);
 	inner_capacity = 2;
 	inner_size = 0;
 }
 
-
 // // copy constructor
-// template<class T, typename Growth> Vector<T, Growth>::Vector(Vector<T, Growth>& v){
-// 	inner_array = std::unique_ptr<T[ ]>(new T[v.size()]);
-// 	inner_capacity = v.capacity();
-// 	inner_size = v.size();
-// 	growth_rate = v.get_growth_rate();
-	
-// 	// inner_array.swap(v.data());
+template<class T, typename Growth> Vector<T, Growth>::Vector(Vector<T, Growth>& v){
+	inner_capacity = v.capacity();
+	inner_size = v.size();
+	growth_rate = v.get_growth_rate();
+	inner_array = std::unique_ptr<T[ ]>(new T[inner_size]);
 
-// 	std::copy(&inner_array[0], &inner_array[inner_size], &v.data()[0])  ;// nope
-// }
+	std::copy(inner_array[0], inner_array[inner_size], v.data()[0]);
+}
 
 // // rval constructor
 template<class T, typename Growth> Vector<T, Growth>::Vector(Vector<T, Growth>&& v){
@@ -71,8 +65,7 @@ template<class T, typename Growth> Vector<T, Growth>::Vector(Vector<T, Growth>&&
 	inner_capacity = v.capacity();
 	inner_size = v.size();
 	growth_rate = v.get_growth_rate();
-
-	inner_array.swap(v.data());
+	inner_array = std::move(v.data());
 } 
 
 template<class T, typename Growth> Vector<T, Growth>::Vector(const size_t count){
