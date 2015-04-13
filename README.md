@@ -1,3 +1,10 @@
+
+NOTE
+====
+I'll be moving development of this to my DataStructures repo, I'm leaving this repo for the moment, but if you want to see my latest implementation of Vector, here's the link:
+https://github.com/insanitybit/DataStructures
+
+
 Vector
 ======
 
